@@ -65,11 +65,11 @@ class derivatives_portfolio(object):
         for pos in self.positions:
             # determine earliest starting_date
             self.val_env.constants['starting_date'] = \
-                min(self.val_env.constants['starting_date'],
+                    min(self.val_env.constants['starting_date'],
                     positions[pos].mar_env.pricing_date)
             # determine latest date of relevance
             self.val_env.constants['final_date'] = \
-                max(self.val_env.constants['final_date'],
+                    max(self.val_env.constants['final_date'],
                     positions[pos].mar_env.constants['maturity'])
             # collect all underlyings and
             # add to set (avoids redundancy)
@@ -91,10 +91,7 @@ class derivatives_portfolio(object):
             time_grid.insert(0, start)
         if end not in time_grid:
             time_grid.append(end)
-        # delete duplicate entries
-        time_grid = list(set(time_grid))
-        # sort dates in time_grid
-        time_grid.sort()
+        time_grid = sorted(set(time_grid))
         self.time_grid = np.array(time_grid)
         self.val_env.add_list('time_grid', self.time_grid)
 
@@ -155,7 +152,7 @@ class derivatives_portfolio(object):
             mar_env.add_environment(self.val_env)
             # instantiate valuation class
             self.valuation_objects[pos] = \
-                val_class(name=positions[pos].name,
+                    val_class(name=positions[pos].name,
                           mar_env=mar_env,
                           underlying=self.underlying_objects[
                     positions[pos].underlying],
@@ -190,8 +187,15 @@ class derivatives_portfolio(object):
                 # calculate Vega of position
                 value.vega() * p.quantity,
             ])
-        # generate a pandas DataFrame object with all results
-        res_df = pd.DataFrame(res_list,
-                              columns=['name', 'quant.', 'value', 'curr.',
-                                       'pos_value', 'pos_delta', 'pos_vega'])
-        return res_df
+        return pd.DataFrame(
+            res_list,
+            columns=[
+                'name',
+                'quant.',
+                'value',
+                'curr.',
+                'pos_value',
+                'pos_delta',
+                'pos_vega',
+            ],
+        )

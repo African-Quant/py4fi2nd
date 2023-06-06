@@ -98,8 +98,7 @@ class valuation_class(object):
             return round(delta, accuracy)
 
     def vega(self, interval=0.01, accuracy=4):
-        if interval < self.underlying.volatility / 50.:
-            interval = self.underlying.volatility / 50.
+        interval = max(interval, self.underlying.volatility / 50.)
         # forward-difference approximation
         # calculate the left value for numerical Vega
         value_left = self.present_value(fixed_seed=True)

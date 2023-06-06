@@ -60,7 +60,7 @@ class valuation_mcs_american(valuation_class):
             return also full 1d array of present values
         '''
         instrument_values, inner_values, time_index_start, time_index_end = \
-            self.generate_payoff(fixed_seed=fixed_seed)
+                self.generate_payoff(fixed_seed=fixed_seed)
         time_list = self.underlying.time_grid[
             time_index_start:time_index_end + 1]
         discount_factors = self.discount_curve.get_discount_factors(
@@ -79,7 +79,4 @@ class valuation_mcs_american(valuation_class):
             V = np.where(inner_values[t] > C, inner_values[t], V * df)
         df = discount_factors[0, 1] / discount_factors[1, 1]
         result = df * np.sum(V) / len(V)
-        if full:
-            return round(result, accuracy), df * V
-        else:
-            return round(result, accuracy)
+        return (round(result, accuracy), df * V) if full else round(result, accuracy)

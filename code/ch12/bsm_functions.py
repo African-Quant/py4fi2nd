@@ -37,11 +37,9 @@ def bsm_call_value(S0, K, T, r, sigma):
     S0 = float(S0)
     d1 = (log(S0 / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
     d2 = (log(S0 / K) + (r - 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
-    # stats.norm.cdf --> cumulative distribution function
-    #                    for normal distribution
-    value = (S0 * stats.norm.cdf(d1, 0.0, 1.0) -
-             K * exp(-r * T) * stats.norm.cdf(d2, 0.0, 1.0))
-    return value
+    return S0 * stats.norm.cdf(d1, 0.0, 1.0) - K * exp(
+        -r * T
+    ) * stats.norm.cdf(d2, 0.0, 1.0)
 
 
 def bsm_vega(S0, K, T, r, sigma):
@@ -72,8 +70,7 @@ def bsm_vega(S0, K, T, r, sigma):
 
     S0 = float(S0)
     d1 = (log(S0 / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
-    vega = S0 * stats.norm.pdf(d1, 0.0, 1.0) * sqrt(T)
-    return vega
+    return S0 * stats.norm.pdf(d1, 0.0, 1.0) * sqrt(T)
 
 # Implied volatility function
 
@@ -101,7 +98,7 @@ def bsm_call_imp_vol(S0, K, T, r, C0, sigma_est, it=100):
     simga_est: float
         numerically estimated implied volatility
     '''
-    for i in range(it):
+    for _ in range(it):
         sigma_est -= ((bsm_call_value(S0, K, T, r, sigma_est) - C0) /
                       bsm_vega(S0, K, T, r, sigma_est))
     return sigma_est

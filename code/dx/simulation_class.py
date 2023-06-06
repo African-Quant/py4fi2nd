@@ -81,17 +81,11 @@ class simulation_class(object):
         if len(self.special_dates) > 0:
             # add all special dates
             time_grid.extend(self.special_dates)
-            # delete duplicates
-            time_grid = list(set(time_grid))
-            # sort list
-            time_grid.sort()
+            time_grid = sorted(set(time_grid))
         self.time_grid = np.array(time_grid)
 
     def get_instrument_values(self, fixed_seed=True):
-        if self.instrument_values is None:
+        if self.instrument_values is None or fixed_seed is False:
             # only initiate simulation if there are no instrument values
-            self.generate_paths(fixed_seed=fixed_seed, day_count=365.)
-        elif fixed_seed is False:
-            # also initiate resimulation when fixed_seed is False
             self.generate_paths(fixed_seed=fixed_seed, day_count=365.)
         return self.instrument_values
